@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	
+	<property name="log.root" value="/app/logs/blog" />
+	<property name="log.blog" value="${log.root}/blog.log" />
+	 
+	 <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>[%-5level][%d{yyyy-MM-dd HH:mm:ss}]&lt;%logger{10}:%method:%line&gt; %msg%n</pattern>
+        </layout>
+    </appender>
+
+	<appender name="rollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${log.blog}</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.blog}.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<maxHistory>14</maxHistory>  
+    		<cleanHistoryOnStart>true</cleanHistoryOnStart>  
+		</rollingPolicy>
+		<encoder>
+			<pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+    
+     <logger name="com.blog" additivity="true">
+        <level value="DEBUG" />
+        <appender-ref ref="rollingFile" />
+    </logger>
+    
+	
+	<root level="DEBUG">
+		<appender-ref ref="console" />
+		<appender-ref ref="rollingFile" />
+	</root>
+</configuration>
