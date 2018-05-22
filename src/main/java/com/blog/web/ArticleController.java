@@ -18,25 +18,28 @@ import com.blog.service.ArticleService;
 @RestController
 @RequestMapping(value = "/article")
 public class ArticleController {
-    @Autowired
-    ArticleService articleService;
+	@Autowired
+	ArticleService articleService;
 
-    @RequestMapping(value = "/save", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
-    public Response save() {
-        return Response.ok();
-    }
+	@RequestMapping(value = "/save", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+	public Response save(HttpServletRequest request) {
+		String content = request.getParameter("");
+		String txtcontent = content.replaceAll("</?[^>]+>", ""); // 剔出<html>的标签
+		txtcontent = txtcontent.replaceAll("<a>\\s*|\t|\r|\n</a>", "");// 去除字符串中的
+		return Response.ok();
+	}
 
-    @RequestMapping(value = "/detail/{id}", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
-    public Response detail(@PathVariable("id") Integer id) {
-        return Response.ok();
-    }
+	@RequestMapping(value = "/detail/{id}", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public Response detail(@PathVariable("id") Integer id) {
+		return Response.ok();
+	}
 
-    @RequestMapping(value = "/list/{curPage}", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
-    public Response list(HttpServletRequest request, @PathVariable("curPage") Integer curPage) {
-        Page page = Page.getPage(curPage);
-        String search = request.getParameter("search");
-        List<Article> result = articleService.pageList(page);
-        return Response.ok(result);
-    }
+	@RequestMapping(value = "/list/{curPage}", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	public Response list(HttpServletRequest request, @PathVariable("curPage") Integer curPage) {
+		Page page = Page.getPage(curPage);
+		String search = request.getParameter("search");
+		List<Article> result = articleService.pageList(page);
+		return Response.ok(result);
+	}
 
 }

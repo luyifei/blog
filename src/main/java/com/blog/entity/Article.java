@@ -1,65 +1,78 @@
 package com.blog.entity;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
+import com.blog.common.TimeUtils;
+
 public class Article {
-    private Integer id;
+	private Integer id;
 
-    private String title;
+	private String title;
 
-    private Integer categoryId;
+	private Integer categoryId;
 
-    private Integer readCount;
+	private Integer readCount;
 
-    private String summary;
+	private String summary;
 
-    private Date createTime;
+	private LocalDateTime createTime;
 
-    public Integer getId() {
-        return id;
-    }
+	private String createTimeStr;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	public Integer getId() {
+		return id;
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public void setTitle(String title) {
-        this.title = title == null ? null : title.trim();
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public Integer getCategoryId() {
-        return categoryId;
-    }
+	public void setTitle(String title) {
+		this.title = title == null ? null : title.trim();
+	}
 
-    public void setCategoryId(Integer categoryId) {
-        this.categoryId = categoryId;
-    }
+	public Integer getCategoryId() {
+		return categoryId;
+	}
 
-    public Integer getReadCount() {
-        return readCount;
-    }
+	public void setCategoryId(Integer categoryId) {
+		this.categoryId = categoryId;
+	}
 
-    public void setReadCount(Integer readCount) {
-        this.readCount = readCount;
-    }
+	public Integer getReadCount() {
+		return readCount;
+	}
 
-    public String getSummary() {
-        return summary;
-    }
+	public void setReadCount(Integer readCount) {
+		this.readCount = readCount;
+	}
 
-    public void setSummary(String summary) {
-        this.summary = summary == null ? null : summary.trim();
-    }
+	public String getSummary() {
+		return summary;
+	}
 
-    public Date getCreateTime() {
-        return createTime;
-    }
+	public void setSummary(String summary) {
+		this.summary = summary == null ? null : summary.trim();
+	}
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
+	public LocalDateTime getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(LocalDateTime createTime) {
+		this.createTime = createTime;
+	}
+
+	public String getCreateTimeStr() {
+		if (createTime != null) {
+			return TimeUtils.formate(createTime);
+		}
+		return "";
+	}
+
 }
