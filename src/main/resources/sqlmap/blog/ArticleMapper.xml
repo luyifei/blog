@@ -95,11 +95,16 @@
       create_time = #{createTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <select id="pageList" parameterType="com.blog.common.Page" resultMap="BaseResultMap">
+  <select id="pageList" parameterType="com.blog.entity.ArticleQuery" resultMap="BaseResultMap">
     select 
-    <include refid="Base_Column_List" />
-    from t_article
-    LIMIT #{pageIndex,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER};
+    	<include refid="Base_Column_List" />
+    from t_article ta
+	    <where>
+	    	<if test="categoryId != null">
+	    		ta.category_id = #{categoryId,jdbcType=INTEGER}
+	    	</if>
+	    </where>
+    LIMIT #{page.pageIndex,jdbcType=INTEGER},#{page.pageSize,jdbcType=INTEGER};
   </select>
  
 </mapper>

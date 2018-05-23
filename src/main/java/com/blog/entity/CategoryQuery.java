@@ -1,11 +1,15 @@
 package com.blog.entity;
 
+import com.blog.common.Page;
+
 public class CategoryQuery {
     private Integer id;
 
     private Integer pid;
 
     private Integer level;
+    
+
 
     public CategoryQuery() {
 
@@ -38,5 +42,7 @@ public class CategoryQuery {
     public void setLevel(Integer level) {
         this.level = level;
     }
+
+    
 
 }

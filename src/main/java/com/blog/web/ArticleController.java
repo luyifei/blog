@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.blog.common.Page;
 import com.blog.common.Response;
 import com.blog.entity.Article;
+import com.blog.entity.ArticleQuery;
 import com.blog.service.ArticleService;
 
 @RestController
@@ -35,10 +36,14 @@ public class ArticleController {
 	}
 
 	@RequestMapping(value = "/list/{curPage}", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
-	public Response list(HttpServletRequest request, @PathVariable("curPage") Integer curPage) {
+	public Response list(HttpServletRequest request, @PathVariable("curPage") Integer curPage, Integer categoryId) {
 		Page page = Page.getPage(curPage);
 		String search = request.getParameter("search");
-		List<Article> result = articleService.pageList(page);
+		System.err.println(curPage+":"+categoryId);
+		ArticleQuery query = new ArticleQuery();
+		query.setPage(page);
+		query.setCategoryId(categoryId);
+		List<Article> result = articleService.pageList(query);
 		return Response.ok(result);
 	}
 
