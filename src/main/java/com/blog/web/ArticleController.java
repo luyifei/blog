@@ -39,8 +39,8 @@ public class ArticleController {
 	public Response list(HttpServletRequest request, @PathVariable("curPage") Integer curPage, Integer categoryId) {
 		Page page = Page.getPage(curPage);
 		String search = request.getParameter("search");
-		System.err.println(curPage+":"+categoryId);
 		ArticleQuery query = new ArticleQuery();
+		query.setTitle(search);
 		query.setPage(page);
 		query.setCategoryId(categoryId);
 		List<Article> result = articleService.pageList(query);

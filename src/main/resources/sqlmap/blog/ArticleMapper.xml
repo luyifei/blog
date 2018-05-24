@@ -103,6 +103,9 @@
 	    	<if test="categoryId != null">
 	    		ta.category_id = #{categoryId,jdbcType=INTEGER}
 	    	</if>
+	    	<if test="title != null">
+	    		AND ta.title like CONCAT("%",#{title,jdbcType=VARCHAR},"%") 
+	    	</if>
 	    </where>
     LIMIT #{page.pageIndex,jdbcType=INTEGER},#{page.pageSize,jdbcType=INTEGER};
   </select>
