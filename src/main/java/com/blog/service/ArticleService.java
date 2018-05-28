@@ -11,9 +11,14 @@ import com.blog.mapper.ArticleMapper;
 
 @Service
 public class ArticleService {
-    @Autowired
-    ArticleMapper articleMapper;
-    public List<Article> pageList(ArticleQuery query){
-        return articleMapper.pageList(query);
-    }
+	@Autowired
+	ArticleMapper articleMapper;
+
+	public List<Article> pageList(ArticleQuery query) {
+		return articleMapper.pageList(query);
+	}
+
+	public Article saveArticle(Article article) {
+		return article;
+	}
 }

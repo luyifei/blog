@@ -18,6 +18,8 @@ public class Article {
 
 	private LocalDateTime createTime;
 
+	private String content;
+
 	private String createTimeStr;
 
 	public Integer getId() {
@@ -66,6 +68,14 @@ public class Article {
 
 	public void setCreateTime(LocalDateTime createTime) {
 		this.createTime = createTime;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
 	}
 
 	public String getCreateTimeStr() {

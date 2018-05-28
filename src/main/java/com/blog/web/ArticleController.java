@@ -24,10 +24,16 @@ public class ArticleController {
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
 	public Response save(HttpServletRequest request) {
-		String content = request.getParameter("");
-		String txtcontent = content.replaceAll("</?[^>]+>", ""); // 剔出<html>的标签
-		txtcontent = txtcontent.replaceAll("<a>\\s*|\t|\r|\n</a>", "");// 去除字符串中的
-		return Response.ok();
+		String category = request.getParameter("category");
+		String content = request.getParameter("content");
+		String summary = content.replaceAll("</?[^>]+>", ""); // 剔出<html>的标签
+		summary = summary.replaceAll("<a>\\s*|\t|\r|\n</a>", "");// 去除字符串中的
+		Article article = new Article();
+		article.setSummary(summary);
+		article.setContent(content);
+		article.setCategoryId(Integer.valueOf(category));
+		article = articleService.saveArticle(article);
+		return Response.ok(article.getId());
 	}
 
 	@RequestMapping(value = "/detail/{id}", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
