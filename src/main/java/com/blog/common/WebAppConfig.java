@@ -24,6 +24,7 @@ public class WebAppConfig {
 	}
 
 	private ApiInfo apiInfo() {
+	    // /blog/swagger2/index.html
 		Contact contact = new Contact("卢义飞", "", "abc@qq.com");
 		return new ApiInfo("卢义飞的个人站", // 大标题 title
 				"API接口列表", // 小标题
