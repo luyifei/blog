@@ -22,4 +22,8 @@ public interface ArticleMapper {
 	int updateByPrimaryKey(Article record);
 
 	List<Article> pageList(ArticleQuery query);
+	
+	int saveContent(Article record);
+	
+	Article queryContentById(Integer id);
 }

@@ -7,6 +7,7 @@
     <result column="category_id" jdbcType="INTEGER" property="categoryId" />
     <result column="read_count" jdbcType="INTEGER" property="readCount" />
     <result column="summary" jdbcType="VARCHAR" property="summary" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
   <sql id="Base_Column_List">
@@ -23,10 +24,10 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.blog.entity.Article" useGeneratedKeys="true">
-    insert into t_article (title, category_id, read_count, 
-      summary, create_time)
-    values (#{title,jdbcType=VARCHAR}, #{categoryId,jdbcType=INTEGER}, #{readCount,jdbcType=INTEGER}, 
-      #{summary,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+    insert into t_article (title, category_id,  
+      summary)
+    values (#{title,jdbcType=VARCHAR}, #{categoryId,jdbcType=INTEGER}, 
+      #{summary,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.blog.entity.Article" useGeneratedKeys="true">
     insert into t_article
@@ -107,7 +108,20 @@
 	    		AND ta.title like CONCAT("%",#{title,jdbcType=VARCHAR},"%") 
 	    	</if>
 	    </where>
+	    ORDER BY ta.create_time DESC
     LIMIT #{page.pageIndex,jdbcType=INTEGER},#{page.pageSize,jdbcType=INTEGER};
   </select>
  
+ <insert id="saveContent" keyColumn="id" keyProperty="id" parameterType="com.blog.entity.Article" useGeneratedKeys="true">
+    insert into t_article_content (article_id, content)
+    values ( #{id,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR} )
+  </insert>
+ 
+ <select id="queryContentById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    SELECT 
+     ta.id, ta.title, ta.category_id, ta.read_count, ta.summary, ta.create_time,tat.content
+    FROM t_article ta
+    LEFT JOIN t_article_content tat ON (ta.id = tat.article_id)
+    WHERE ta.id = #{id,jdbcType=INTEGER}
+  </select>
 </mapper>
