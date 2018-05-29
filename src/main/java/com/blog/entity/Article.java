@@ -1,8 +1,8 @@
 package com.blog.entity;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.blog.common.TimeUtils;
 
 public class Article {
@@ -18,7 +18,10 @@ public class Article {
 
 	private LocalDateTime createTime;
 
-	private String content;
+	@JSONField(serialize = false)
+	private byte[] content;
+
+	private String contentStr;
 
 	private String createTimeStr;
 
@@ -70,19 +73,26 @@ public class Article {
 		this.createTime = createTime;
 	}
 
-	public String getContent() {
+	public byte[] getContent() {
 		return content;
 	}
 
-	public void setContent(String content) {
+	public void setContent(byte[] content) {
 		this.content = content;
+	}
+
+	public String getContentStr() {
+		if (content != null) {
+			contentStr = new String(content);
+		}
+		return contentStr;
 	}
 
 	public String getCreateTimeStr() {
 		if (createTime != null) {
-			return TimeUtils.formate(createTime);
+			createTimeStr = TimeUtils.formate(createTime);
 		}
-		return "";
+		return createTimeStr;
 	}
 
 }

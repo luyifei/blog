@@ -32,7 +32,7 @@ public class ArticleController {
         Article article = new Article();
         article.setTitle(title);
         article.setSummary(summary);
-        article.setContent(content);
+        article.setContent(content.getBytes());
         article.setCategoryId(Integer.valueOf(category));
         article = articleService.saveArticle(article);
         return Response.ok(article.getId());

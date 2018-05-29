@@ -101,6 +101,17 @@
 	<bean id="multipartResolver"
 		class="org.springframework.web.multipart.support.StandardServletMultipartResolver">
 	</bean>
+	
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<bean class="com.blog.interceptor.AccessLogInterceptor"></bean>
+		</mvc:interceptor>
+		<mvc:interceptor>	
+			<mvc:mapping path="/article/detail/*"/>
+			<bean class="com.blog.interceptor.ReadCountInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
 
 
 </beans>

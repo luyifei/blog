@@ -27,4 +27,8 @@ public class ArticleService {
     public Article queryById(Integer id) {
         return articleMapper.queryContentById(id);
     }
+    
+    public void updateReadCount(Integer id){
+    	articleMapper.updateReadCount(id);
+    }
 }

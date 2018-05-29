@@ -7,7 +7,7 @@
     <result column="category_id" jdbcType="INTEGER" property="categoryId" />
     <result column="read_count" jdbcType="INTEGER" property="readCount" />
     <result column="summary" jdbcType="VARCHAR" property="summary" />
-    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="content" jdbcType="BLOB" property="content" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
   <sql id="Base_Column_List">
@@ -114,7 +114,7 @@
  
  <insert id="saveContent" keyColumn="id" keyProperty="id" parameterType="com.blog.entity.Article" useGeneratedKeys="true">
     insert into t_article_content (article_id, content)
-    values ( #{id,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR} )
+    values ( #{id,jdbcType=INTEGER}, #{content} )
   </insert>
  
  <select id="queryContentById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -124,4 +124,11 @@
     LEFT JOIN t_article_content tat ON (ta.id = tat.article_id)
     WHERE ta.id = #{id,jdbcType=INTEGER}
   </select>
+  <update id="updateReadCount" parameterType="java.lang.Integer">
+    update t_article
+    set 
+      read_count = read_count + 1 
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
 </mapper>

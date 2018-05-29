@@ -1,7 +1,5 @@
 package com.blog.entity;
 
-import com.blog.common.Page;
-
 public class CategoryQuery {
     private Integer id;
 
