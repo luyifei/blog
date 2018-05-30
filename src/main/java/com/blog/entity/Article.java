@@ -2,8 +2,8 @@ package com.blog.entity;
 
 import java.time.LocalDateTime;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.blog.common.TimeUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class Article {
 	private Integer id;
@@ -15,10 +15,10 @@ public class Article {
 	private Integer readCount;
 
 	private String summary;
-
+	@JsonIgnore
 	private LocalDateTime createTime;
 
-	@JSONField(serialize = false)
+	@JsonIgnore
 	private byte[] content;
 
 	private String contentStr;

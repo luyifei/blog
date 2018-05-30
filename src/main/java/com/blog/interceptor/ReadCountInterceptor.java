@@ -19,8 +19,12 @@ public class ReadCountInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-		// TODO Auto-generated method stub
-		return false;
+		@SuppressWarnings("unchecked")
+		Map<String, String> pathVariables = (Map<String, String>) request
+				.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+		String id = pathVariables.get("id");
+		articleService.updateReadCount(Integer.valueOf(id));
+		return true;
 	}
 
 	@Override
@@ -33,11 +37,6 @@ public class ReadCountInterceptor implements HandlerInterceptor {
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
 			throws Exception {
-		@SuppressWarnings("unchecked")
-		Map<String, String> pathVariables = (Map<String, String>) request
-				.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-		String id = pathVariables.get("id");
-		articleService.updateReadCount(Integer.valueOf(id));
 
 	}
 

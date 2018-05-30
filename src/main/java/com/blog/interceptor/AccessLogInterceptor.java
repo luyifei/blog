@@ -3,21 +3,22 @@ package com.blog.interceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.blog.common.CusAccessObjectUtil;
+import com.blog.entity.AccessLog;
+import com.blog.service.AccessLogService;
 
 public class AccessLogInterceptor implements HandlerInterceptor {
+
+	@Autowired
+	AccessLogService accessLogService;
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-		String params = request.getQueryString();// 返回请求行中的参数部分
-		String ip = CusAccessObjectUtil.getIpAddress(request);
-		String uri = request.getRequestURI();
-		String contextPath = request.getContextPath();
-		System.out.println(uri.substring(contextPath.length()));
 		return true;
 	}
 
@@ -31,8 +32,14 @@ public class AccessLogInterceptor implements HandlerInterceptor {
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
 			throws Exception {
-		// TODO Auto-generated method stub
+		String uri = request.getRequestURI();
+		String contextPath = request.getContextPath();// 工程路径
 
+		AccessLog log = new AccessLog();
+		log.setUrl(uri.substring(contextPath.length()));
+		log.setIp(CusAccessObjectUtil.getIpAddress(request));//获取用户IP地址
+		log.setParam(request.getQueryString());// 参数部分
+		accessLogService.saveLog(log);
 	}
 
 }
