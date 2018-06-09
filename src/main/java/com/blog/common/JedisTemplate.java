@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import redis.clients.jedis.BitOP;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.ScanParams;
 import redis.clients.jedis.ScanResult;
@@ -19,6 +20,7 @@ import redis.clients.jedis.BinaryClient.LIST_POSITION;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 import redis.clients.jedis.exceptions.JedisDataException;
 import redis.clients.jedis.exceptions.JedisException;
+import redis.clients.jedis.params.sortedset.ZIncrByParams;
 
 /**
  * 
@@ -1926,6 +1928,442 @@ public class JedisTemplate {
 			@Override
 			public Long action(Jedis jedis) {
 				return jedis.srem(key, members);
+			}
+		});
+	}
+
+	// SortedSet（有序集合）
+
+	/**
+	 * 将一个或多个 member 元素及其 score 值加入到有序集 key 当中。
+	 * 
+	 * 如果某个 member 已经是有序集的成员，那么更新这个 member 的 score 值，并通过重新插入这个 member 元素，来保证该
+	 * member 在正确的位置上
+	 * 
+	 * @version >= 1.2.0
+	 * @param key
+	 * @param scoreMembers
+	 * @return 被成功添加的新成员的数量，不包括那些被更新的、已经存在的成员。
+	 */
+	public Long zadd(final String key, final Map<String, Double> scoreMembers) {
+		return execute(new JedisAction<Long>() {
+			@Override
+			public Long action(Jedis jedis) {
+				return jedis.zadd(key, scoreMembers);
+			}
+		});
+	}
+
+	/**
+	 * 返回有序集 key 的基数。
+	 * 
+	 * @version >= 1.2.0
+	 * @param key
+	 * @param scoreMembers
+	 * @return 当 key 存在且是有序集类型时，返回有序集的基数。 当 key 不存在时，返回 0 。
+	 */
+	public Long zcard(final String key) {
+		return execute(new JedisAction<Long>() {
+			@Override
+			public Long action(Jedis jedis) {
+				return jedis.zcard(key);
+			}
+		});
+	}
+
+	/**
+	 * 返回有序集 key 中， score 值在 min 和 max 之间(默认包括 score 值等于 min 或 max )的成员的数量。
+	 * 
+	 * @version >= 2.0.0
+	 * @param key
+	 * @param min
+	 * @param max
+	 * @return score 值在 min 和 max 之间的成员的数量。
+	 */
+	public Long zcount(final String key, final double min, final double max) {
+		return execute(new JedisAction<Long>() {
+			@Override
+			public Long action(Jedis jedis) {
+				return jedis.zcount(key, min, max);
+			}
+		});
+	}
+
+	/**
+	 * 为有序集 key 的成员 member 的 score 值加上增量 increment 。
+	 * 
+	 * 可以通过传递一个负数值 increment ，让 score 减去相应的值，比如 ZINCRBY key -5 member ，就是让
+	 * member 的 score 值减去 5 。
+	 * 
+	 * 当 key 不存在，或 member 不是 key 的成员时， ZINCRBY key increment member 等同于 ZADD key
+	 * increment member 。
+	 * 
+	 * @version >= 1.2.0
+	 * @param key
+	 * @param score
+	 * @param member
+	 * @return member 成员的新 score 值。
+	 */
+	public Double zincrby(final String key, final double score, final String member) {
+		return execute(new JedisAction<Double>() {
+			@Override
+			public Double action(Jedis jedis) {
+				return jedis.zincrby(key, score, member);
+			}
+		});
+	}
+
+	/**
+	 * 为有序集 key 的成员 member 的 score 值加上增量 increment 。
+	 * 
+	 * @param key
+	 * @param score
+	 * @param member
+	 * @param params
+	 *            ZIncrByParams.NX 必须成员不存在才能赋值 ZIncrByParams.XX 必须成员存在才能赋值
+	 * @return
+	 */
+	public Double zincrby(String key, double score, String member, ZIncrByParams params) {
+		return execute(new JedisAction<Double>() {
+			@Override
+			public Double action(Jedis jedis) {
+				return jedis.zincrby(key, score, member, params);
+			}
+		});
+	}
+
+	/**
+	 * 返回有序集 key 中，成员 member 的 score 值。
+	 * 
+	 * 
+	 * @version >= 1.2.0
+	 * @param key
+	 * @param member
+	 * @return member 成员的 score 值。
+	 */
+	public Double zscore(final String key, final String member) {
+		return execute(new JedisAction<Double>() {
+			@Override
+			public Double action(Jedis jedis) {
+				return jedis.zscore(key, member);
+			}
+		});
+	}
+
+	/**
+	 * 返回有序集 key 中，指定区间内的成员。
+	 * 
+	 * 其中成员的位置按 score 值递增(从小到大)来排序。
+	 * 
+	 * @param key
+	 * @param start
+	 * @param end
+	 * @return 指定区间内，带有 score 值(可选)的有序集成员的列表。
+	 */
+	public Set<String> zrange(final String key, final long start, final long end) {
+		return execute(new JedisAction<Set<String>>() {
+			@Override
+			public Set<String> action(Jedis jedis) {
+				return jedis.zrange(key, start, end);
+			}
+		});
+	}
+
+	/**
+	 * 返回有序集 key 中，所有 score 值介于 min 和 max 之间(包括等于 min 或 max )的成员。有序集成员按 score
+	 * 值递增(从小到大)次序排列。
+	 * 
+	 * @version >= 1.0.5
+	 * @param key
+	 * @param min
+	 * @param max
+	 * @return 指定区间内，带有 score 值(可选)的有序集成员的列表。
+	 */
+	public Set<String> zrangeByScore(final String key, final String min, final String max) {
+		return execute(new JedisAction<Set<String>>() {
+			@Override
+			public Set<String> action(Jedis jedis) {
+				return jedis.zrangeByScore(key, min, max);
+			}
+		});
+	}
+
+	/**
+	 * 返回有序集 key 中，所有 score 值介于 min 和 max 之间(包括等于 min 或 max )的成员。有序集成员按 score
+	 * 值递增(从小到大)次序排列。
+	 * 
+	 * @version >= 1.0.5
+	 * @param key
+	 * @param min
+	 * @param max
+	 * @param offset
+	 *            开始返回元素下标
+	 * @param count
+	 *            返回数量
+	 * @return 指定区间内，带有 score 值(可选)的有序集成员的列表。
+	 */
+	public Set<String> zrangeByScore(final String key, final String min, final String max, final int offset,
+			final int count) {
+		return execute(new JedisAction<Set<String>>() {
+			@Override
+			public Set<String> action(Jedis jedis) {
+				return jedis.zrangeByScore(key, min, max, offset, count);
+			}
+		});
+	}
+
+	/**
+	 * 返回有序集 key 中，指定区间内的成员。
+	 * 
+	 * 其中成员的位置按 score 值递减(从大到小)来排列。
+	 * 
+	 * @param key
+	 * @param start
+	 * @param end
+	 * @return 指定区间内，带有 score 值(可选)的有序集成员的列表。
+	 */
+	public Set<String> zrevrange(final String key, final long start, final long end) {
+		return execute(new JedisAction<Set<String>>() {
+			@Override
+			public Set<String> action(Jedis jedis) {
+				return jedis.zrevrange(key, start, end);
+			}
+		});
+	}
+
+	/**
+	 * 返回有序集 key 中， score 值介于 max 和 min 之间(默认包括等于 max 或 min )的所有的成员。有序集成员按 score
+	 * 值递减(从大到小)的次序排列。
+	 * 
+	 * @param key
+	 * @param start
+	 * @param end
+	 * @return 指定区间内，带有 score 值(可选)的有序集成员的列表。
+	 */
+	public Set<String> zrevrangeByScore(final String key, final String max, final String min) {
+		return execute(new JedisAction<Set<String>>() {
+			@Override
+			public Set<String> action(Jedis jedis) {
+				return jedis.zrevrangeByScore(key, max, min);
+			}
+		});
+	}
+
+	/**
+	 * 返回有序集 key 中， score 值介于 max 和 min 之间(默认包括等于 max 或 min )的所有的成员。有序集成员按 score
+	 * 值递减(从大到小)的次序排列。
+	 * 
+	 * @param key
+	 * @param max
+	 * @param min
+	 * @param offset
+	 * @param count
+	 * @return 指定区间内，带有 score 值(可选)的有序集成员的列表。
+	 */
+	public Set<String> zrevrangeByScore(final String key, final String max, final String min, final int offset,
+			final int count) {
+		return execute(new JedisAction<Set<String>>() {
+			@Override
+			public Set<String> action(Jedis jedis) {
+				return jedis.zrevrangeByScore(key, max, min, offset, count);
+			}
+		});
+	}
+
+	/**
+	 * 返回有序集 key 中成员 member 的排名。其中有序集成员按 score 值递增(从小到大)顺序排列。
+	 * 
+	 * 排名以 0 为底，也就是说， score 值最小的成员排名为 0 。
+	 * 
+	 * @version >= 2.0.0
+	 * @param key
+	 * @param member
+	 * @return 如果 member 是有序集 key 的成员，返回 member 的排名。
+	 */
+	public Long zrank(final String key, final String member) {
+		return execute(new JedisAction<Long>() {
+			@Override
+			public Long action(Jedis jedis) {
+				return jedis.zrank(key, member);
+			}
+		});
+	}
+
+	/**
+	 * 返回有序集 key 中成员 member 的排名。其中有序集成员按 score 值递减(从大到小)排序。
+	 * 
+	 * 排名以 0 为底，也就是说， score 值最大的成员排名为 0 。
+	 * 
+	 * @param key
+	 * @param member
+	 * @return 如果 member 是有序集 key 的成员，返回 member 的排名。
+	 */
+	public Long zrevrank(final String key, final String member) {
+		return execute(new JedisAction<Long>() {
+			@Override
+			public Long action(Jedis jedis) {
+				return jedis.zrevrank(key, member);
+			}
+		});
+	}
+
+	/**
+	 * 移除有序集 key 中的一个或多个成员，不存在的成员将被忽略。
+	 * 
+	 * 当 key 存在但不是有序集类型时，返回一个错误。
+	 * 
+	 * @version >= 1.2.0
+	 * @param key
+	 * @param members
+	 * @return 被成功移除的成员的数量，不包括被忽略的成员。
+	 */
+	public Long zrem(final String key, final String... members) {
+		return execute(new JedisAction<Long>() {
+			@Override
+			public Long action(Jedis jedis) {
+				return jedis.zrem(key, members);
+			}
+		});
+	}
+
+	/**
+	 * 移除有序集 key 中，指定排名(rank)区间内的所有成员。
+	 * 
+	 * 区间分别以下标参数 start 和 stop 指出，包含 start 和 stop 在内。
+	 * 
+	 * @param key
+	 * @param members
+	 * @return 被移除成员的数量。
+	 */
+	public Long zremrangeByRank(final String key, final long start, final long end) {
+		return execute(new JedisAction<Long>() {
+			@Override
+			public Long action(Jedis jedis) {
+				return jedis.zremrangeByRank(key, start, end);
+			}
+		});
+	}
+
+	/**
+	 * 移除有序集 key 中，所有 score 值介于 min 和 max 之间(包括等于 min 或 max )的成员。
+	 * 
+	 * @param key
+	 * @param start
+	 * @param end
+	 * @return 被移除成员的数量。
+	 */
+	public Long zremrangeByScore(final String key, final long start, final long end) {
+		return execute(new JedisAction<Long>() {
+			@Override
+			public Long action(Jedis jedis) {
+				return jedis.zremrangeByScore(key, start, end);
+			}
+		});
+	}
+
+	/**
+	 * 计算给定的一个或多个有序集的并集，其中给定 key 的数量必须以 numkeys 参数指定，并将该并集(结果集)储存到 destination 。
+	 * 
+	 * 默认情况下，结果集中某个成员的 score 值是所有给定集下该成员 score 值之 和 。
+	 * 
+	 * @version >= 2.0.0
+	 * @param dstkey
+	 * @param sets
+	 * @return 保存到 destination 的结果集的基数。
+	 */
+	public Long zunionstore(final String dstkey, final String... sets) {
+		return execute(new JedisAction<Long>() {
+			@Override
+			public Long action(Jedis jedis) {
+				return jedis.zunionstore(dstkey, sets);
+			}
+		});
+	}
+
+	/**
+	 * 计算给定的一个或多个有序集的交集，其中给定 key 的数量必须以 numkeys 参数指定，并将该交集(结果集)储存到 destination 。
+	 * 
+	 * 默认情况下，结果集中某个成员的 score 值是所有给定集下该成员 score 值之和.
+	 * 
+	 * @param dstkey
+	 * @param sets
+	 * @return 保存到 destination 的结果集的基数。
+	 */
+	public Long zinterstore(final String dstkey, final String... sets) {
+		return execute(new JedisAction<Long>() {
+			@Override
+			public Long action(Jedis jedis) {
+				return jedis.zinterstore(dstkey, sets);
+			}
+		});
+	}
+
+	// Pub/Sub（发布/订阅）
+
+	/**
+	 * 订阅给定的一个或多个频道的信息。
+	 * 
+	 * @version >= 2.0.0
+	 * @param jedisPubSub
+	 * @param channels
+	 */
+	public void subscribe(final JedisPubSub jedisPubSub, final String... channels) {
+		execute(new JedisActionNoResult() {
+			@Override
+			public void action(Jedis jedis) {
+				jedis.subscribe(jedisPubSub, channels);
+			}
+		});
+	}
+
+	/**
+	 * 订阅一个或多个符合给定模式的频道。
+	 * 
+	 * 每个模式以 * 作为匹配符，比如 it* 匹配所有以 it 开头的频道( it.news 、 it.blog 、 it.tweets 等等)，
+	 * news.* 匹配所有以 news. 开头的频道( news.it 、 news.global.today 等等)，诸如此类。
+	 * 
+	 * @param jedisPubSub
+	 * @param channels
+	 */
+	public void psubscribe(final JedisPubSub jedisPubSub, final String... patterns) {
+		execute(new JedisActionNoResult() {
+			@Override
+			public void action(Jedis jedis) {
+				jedis.psubscribe(jedisPubSub, patterns);
+			}
+		});
+	}
+
+	/**
+	 * 将信息 message 发送到指定的频道 channel 。
+	 * 
+	 * @version >= 2.0.0
+	 * @param channel
+	 * @param message
+	 * @return 接收到信息 message 的订阅者数量。
+	 */
+	public Long publish(final String channel, final String message) {
+		return execute(new JedisAction<Long>() {
+			@Override
+			public Long action(Jedis jedis) {
+				return jedis.publish(channel, message);
+			}
+		});
+	}
+
+	/**
+	 * 列出当前的活跃频道。
+	 * 
+	 * 活跃频道指的是那些至少有一个订阅者的频道， 订阅模式的客户端不计算在内。
+	 * 
+	 * @param pattern
+	 * @return 一个由活跃频道组成的列表。
+	 */
+	public List<String> publish(final String pattern) {
+		return execute(new JedisAction<List<String>>() {
+			@Override
+			public List<String> action(Jedis jedis) {
+				return jedis.pubsubChannels(pattern);
 			}
 		});
 	}
