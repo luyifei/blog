@@ -23,7 +23,21 @@ public interface ArticleMapper {
 
 	List<Article> pageList(ArticleQuery query);
 
+	/**
+	 * 保存内容
+	 * 
+	 * @param record
+	 * @return
+	 */
 	int saveContent(Article record);
+
+	/**
+	 * 更新内容
+	 * 
+	 * @param record
+	 * @return
+	 */
+	int updateContent(Article record);
 
 	Article queryContentById(Integer id);
 

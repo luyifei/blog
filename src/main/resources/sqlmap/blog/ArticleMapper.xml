@@ -116,6 +116,10 @@
     insert into t_article_content (article_id, content)
     values ( #{id,jdbcType=INTEGER}, #{content} )
   </insert>
+  
+  <insert id="updateContent" parameterType="com.blog.entity.Article">
+    update t_article_content  set content = #{content,jdbcType=VARCHAR} where article_id= #{id,jdbcType=INTEGER}
+  </insert>
  
  <select id="queryContentById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     SELECT 

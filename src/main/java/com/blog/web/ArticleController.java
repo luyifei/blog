@@ -30,12 +30,14 @@ public class ArticleController {
 	 */
 	@RequestMapping(value = "/save", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
 	public Response save(HttpServletRequest request) {
+		String id = request.getParameter("id");
 		String title = request.getParameter("title");
 		String category = request.getParameter("categoryVal");
 		String content = request.getParameter("content");
 		String summary = content.replaceAll("</?[^>]+>", ""); // 剔出<html>的标签
 		summary = summary.replaceAll("<a>\\s*|\t|\r|\n</a>", "");// 去除字符串中的
 		Article article = new Article();
+		article.setId(Integer.valueOf(id));
 		article.setTitle(title);
 		article.setSummary(summary);
 		article.setContent(content.getBytes());

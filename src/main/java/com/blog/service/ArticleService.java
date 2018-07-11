@@ -11,24 +11,31 @@ import com.blog.mapper.ArticleMapper;
 
 @Service
 public class ArticleService {
-    @Autowired
-    ArticleMapper articleMapper;
+	private final static Integer SUMMARY_LENGTH = 300;
+	@Autowired
+	ArticleMapper articleMapper;
 
-    public List<Article> pageList(ArticleQuery query) {
-        return articleMapper.pageList(query);
-    }
+	public List<Article> pageList(ArticleQuery query) {
+		return articleMapper.pageList(query);
+	}
 
-    public Article saveArticle(Article article) {
-        articleMapper.insert(article);
-        articleMapper.saveContent(article);
-        return article;
-    }
+	public Article saveArticle(Article article) {
+		article.setSummary(article.getSummary().substring(0, SUMMARY_LENGTH) + "...");
+		if (article.getId() != null) {
+			articleMapper.updateByPrimaryKeySelective(article);
+			articleMapper.updateContent(article);
+		} else {
+			articleMapper.insert(article);
+			articleMapper.saveContent(article);
+		}
+		return article;
+	}
 
-    public Article queryById(Integer id) {
-        return articleMapper.queryContentById(id);
-    }
-    
-    public void updateReadCount(Integer id){
-    	articleMapper.updateReadCount(id);
-    }
+	public Article queryById(Integer id) {
+		return articleMapper.queryContentById(id);
+	}
+
+	public void updateReadCount(Integer id) {
+		articleMapper.updateReadCount(id);
+	}
 }
