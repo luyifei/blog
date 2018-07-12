@@ -28,8 +28,9 @@ public class CommonFileService {
 
 		CommonFile commonFile = new CommonFile();
 		FileConfig fileConfig = commonFileMapper.getFileConfigByModel(FileConfigModelEnum.IMAGE.getModel());
-		String filePath = fileConfig.getPrefixPath() + fileConfig.getSuffixPath() + File.separator
-				+ LocalDateTimeUtils.formatTime(LocalDateTime.now(), "yyyyMM");
+		// 按月文件夹保存
+		String datePath = LocalDateTimeUtils.formatTime(LocalDateTime.now(), "yyyyMM");
+		String filePath = fileConfig.getPrefixPath() + fileConfig.getSuffixPath() + File.separator + datePath;
 		String ext = file.getOriginalFilename().split("\\.")[1];
 		String systemFileName = LocalDateTimeUtils.getMilliByTime(LocalDateTime.now()).toString() + "." + ext;
 		File folder = new File(filePath);
@@ -48,6 +49,6 @@ public class CommonFileService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		map.put("url", uploadedFile);
+		map.put("url", fileConfig.getSuffixPath() + File.separator + datePath + File.separator + systemFileName);
 	}
 }

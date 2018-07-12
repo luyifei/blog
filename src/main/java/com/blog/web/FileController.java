@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,10 @@ public class FileController {
 
 	@RequestMapping("/imageUpload")
 	public Map<String, Object> imageUpload(MultipartHttpServletRequest request, HttpServletResponse response) {
+		ServletContext application = request.getSession().getServletContext();
+		// 文件保存目录URL
+		String contextPath = request.getContextPath() + "/images/";
+
 		Iterator<String> item = request.getFileNames();
 		Map<String, Object> map = new HashMap<>();
 		while (item.hasNext()) {

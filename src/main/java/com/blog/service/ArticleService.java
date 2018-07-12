@@ -20,7 +20,9 @@ public class ArticleService {
 	}
 
 	public Article saveArticle(Article article) {
-		article.setSummary(article.getSummary().substring(0, SUMMARY_LENGTH) + "...");
+		if (article.getSummary().length() > SUMMARY_LENGTH) {
+			article.setSummary(article.getSummary().substring(0, SUMMARY_LENGTH) + "...");
+		}
 		if (article.getId() != null) {
 			articleMapper.updateByPrimaryKeySelective(article);
 			articleMapper.updateContent(article);
