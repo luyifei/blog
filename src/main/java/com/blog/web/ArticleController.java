@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,7 +38,9 @@ public class ArticleController {
 		String summary = content.replaceAll("</?[^>]+>", ""); // 剔出<html>的标签
 		summary = summary.replaceAll("<a>\\s*|\t|\r|\n</a>", "");// 去除字符串中的
 		Article article = new Article();
-		article.setId(Integer.valueOf(id));
+		if(!StringUtils.isEmpty(id)){
+			article.setId(Integer.valueOf(id));
+		}
 		article.setTitle(title);
 		article.setSummary(summary);
 		article.setContent(content.getBytes());
