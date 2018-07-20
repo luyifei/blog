@@ -9,4 +9,10 @@ public class TimeUtils {
 		String localTime = df.format(time);
 		return localTime;
 	}
+	
+	public static String formate2(LocalDateTime time) {
+		DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		String localTime = df.format(time);
+		return localTime;
+	}
 }
