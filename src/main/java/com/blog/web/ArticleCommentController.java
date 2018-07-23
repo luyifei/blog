@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +29,6 @@ public class ArticleCommentController {
 	@RequestMapping(value = "/save", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
 	public Response save(HttpServletRequest request, HttpServletResponse response) {
 		String ip = CusAccessObjectUtil.getIpAddress(request);
-		String a = request.getParameter("articleId");
 		Integer articleId = Integer.valueOf(request.getParameter("articleId"));
 		String comment = request.getParameter("comment");
 		ArticleComment articleComment = new ArticleComment();
@@ -48,6 +48,22 @@ public class ArticleCommentController {
 	public Response list(HttpServletRequest request, HttpServletResponse response,
 			@PathVariable("articleId") Integer articleId) {
 		List<ArticleComment> result = articleCommentService.queryListByArticleId(articleId);
+		for (ArticleComment articleComment : result) {
+			String[] elements = articleComment.getUserIp().split("\\.");
+			String star = "*";
+			String e1 = "";
+			String e2 = "";
+			for (int i = 0; i < elements[1].length(); i++) {
+				e1 += star;
+			}
+			for (int i = 0; i < elements[2].length(); i++) {
+				e2 += star;
+			}
+			elements[1] = e1;
+			elements[2] = e2;
+			String ip = StringUtils.join(elements, ".");
+			articleComment.setUserIp(ip);
+		}
 		return Response.ok(result);
 	}
 }
