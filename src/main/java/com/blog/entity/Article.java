@@ -1,6 +1,7 @@
 package com.blog.entity;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import com.blog.common.TimeUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -94,5 +95,14 @@ public class Article {
 		}
 		return createTimeStr;
 	}
+
+    @Override
+    public String toString() {
+        return "Article [id=" + id + ", title=" + title + ", categoryId=" + categoryId + ", readCount=" + readCount
+                + ", summary=" + summary + ", createTime=" + createTime + ", content=" + Arrays.toString(content)
+                + ", contentStr=" + contentStr + ", createTimeStr=" + createTimeStr + "]";
+    }
+	
+	
 
 }
